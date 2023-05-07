@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public Sprite[] sprites;
     private int spriteIndex;
+    public AudioSource dieSFX, flapSFX, hitSFX, pointSFX;
 
     private void Awake()
     {
@@ -33,6 +34,11 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
         {
             direction = Vector3.up * strength;
+
+            if (!flapSFX.isPlaying)
+            {
+                flapSFX.Play();
+            }
         }
 
         if (Input.touchCount > 0)
@@ -65,10 +71,21 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.tag == "Obstacle")
         {
+            if (!hitSFX.isPlaying && !dieSFX.isPlaying)
+            {
+                hitSFX.Play();
+                dieSFX.PlayDelayed(0.25f);
+            }
+
             // Better way of doing this
             FindObjectOfType<GameManager>().GameOver();
         } else if (other.gameObject.tag == "Scoring")
         {
+            if (!pointSFX.isPlaying)
+            {
+                pointSFX.Play();
+            }
+
             FindObjectOfType<GameManager>().IncreaseScore();
         }
     }
